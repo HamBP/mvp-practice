@@ -1,5 +1,6 @@
 package me.algosketch.mvpground.controller
 
+import android.annotation.SuppressLint
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import me.algosketch.mvpground.model.Todo
@@ -16,4 +17,11 @@ class TodoAdapter(initialTodos: List<Todo>) : RecyclerView.Adapter<TodoViewHolde
     }
 
     override fun getItemCount(): Int = todos.size
+
+    @SuppressLint("NotifyDataSetChanged")
+    fun submitList(newTodos: List<Todo>) {
+        todos.clear()
+        todos.addAll(newTodos)
+        notifyDataSetChanged()
+    }
 }

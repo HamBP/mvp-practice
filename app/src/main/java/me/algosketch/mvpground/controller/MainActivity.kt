@@ -5,11 +5,16 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import me.algosketch.mvpground.R
 import me.algosketch.mvpground.model.TodoRepository
 
 class MainActivity : AppCompatActivity() {
+    private lateinit var adapter: TodoAdapter
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -20,8 +25,19 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
-        val adapter = TodoAdapter(emptyList())
+        adapter = TodoAdapter(emptyList())
         val recyclerView = findViewById<RecyclerView>(R.id.rv_todos)
         recyclerView.adapter = adapter
+
+        initData()
+    }
+
+    private fun initData() {
+        val repository = TodoRepository()
+        repository.getTodos()
+            .onEach { newTodos ->
+                adapter.submitList(newTodos)
+            }
+            .launchIn(lifecycleScope)
     }
 }
